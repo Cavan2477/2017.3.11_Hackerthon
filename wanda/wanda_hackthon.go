@@ -562,6 +562,19 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 	return allStockHolder ,nil
 }
 
+// add by xubing
+func GetAllRegulation(stub shim.ChaincodeStubInterface) ([]Regulation, error) {
+       var allRegulations []Regulation
+       for i := 0; i < regulationNo; i++ {
+              regulationBytes, _ := stub.GetState("regulation" + strconv.Itoa(i))
+
+              var regulation Regulation
+              _ = json.Unmarshal(regulationBytes, &regulation)
+              allRegulations = append(allRegulations, regulation)
+       }
+       return allRegulations, nil
+}
+
 // 获取指定规则信息
 // author: CavanLiu
 func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regulation,error){
@@ -596,15 +609,6 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	var expireLosingRateByUser float64 	= String2Float64(args[6])
 	var regulationBreak float64 		= String2Float64(args[7])
 	var name string 					= args[8]
-	
-	/*transactionDay 			
-	earningRate 			
-	losingRate 				
-	expireEarningRate = String2Float64(args[3])
-	expireLosingRate = String2Float64(args[4])
-	expireEarningRateByUser = String2Float64(args[5])
-	expireLosingRateByUser = String2Float64(args[6])
-	regulationBreak = String2Float64(args[7])*/
 
 	regulation = Regulation {
 						ID:"regulation" + strconv.Itoa(regulationNo), 

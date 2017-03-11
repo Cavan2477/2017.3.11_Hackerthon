@@ -587,30 +587,36 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
 	var regulation Regulation
 	
-	var transactionDay int
-	var earningRate float64
-	/*var losingRate,err 			:= ParseFloat(args[2], 64)
-	var expireEarningRate 		= ParseFloat(args[3], 64)
-	var expireLosingRate 		= ParseFloat(args[4], 64)
-	var expireEarningRateByUser = ParseFloat(args[5], 64)
-	var expireLosingRateByUser 	= ParseFloat(args[6], 64)
-	var regulationBreak 		= ParseFloat(args[7], 64)
-	var name 					= args[8]*/
+	var transactionDay int 				= String2Int(args[0])
+	var earningRate float64 			= String2Float64(args[1])
+	var losingRate float64 				= String2Float64(args[2])
+	var expireEarningRate float64 		= String2Float64(args[3])
+	var expireLosingRate float64 		= String2Float64(args[4])
+	var expireEarningRateByUser float64 = String2Float64(args[5])
+	var expireLosingRateByUser float64 	= String2Float64(args[6])
+	var regulationBreak float64 		= String2Float64(args[7])
+	var name string 					= args[8]
 	
-	transactionDay = String2Int(args[0])
-	earningRate = String2Float64(args[1])
+	/*transactionDay 			
+	earningRate 			
+	losingRate 				
+	expireEarningRate = String2Float64(args[3])
+	expireLosingRate = String2Float64(args[4])
+	expireEarningRateByUser = String2Float64(args[5])
+	expireLosingRateByUser = String2Float64(args[6])
+	regulationBreak = String2Float64(args[7])*/
 
 	regulation = Regulation {
 						ID:"regulation" + strconv.Itoa(regulationNo), 
 						TransactionDay:transactionDay, 
-						/*EarningRate:earningRate, 
+						EarningRate:earningRate, 
 						LosingRate:losingRate,
 						ExpireEarningRate:expireEarningRate,
 						ExpireLosingRate:expireLosingRate,
 						ExpireEarningRateByUser:expireEarningRateByUser,
 						ExpireLosingRateByUser:expireLosingRateByUser,
 						RegulationBreak:regulationBreak,
-						Name:name,*/
+						Name:name,
 						}
 	
 	regulationBytes,err := json.Marshal(&regulation)
@@ -627,6 +633,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 }
 
 // String转Int
+// author: CavanLiu
 func String2Int(strVal string) int {
 	var value int
 	
@@ -641,6 +648,7 @@ func String2Int(strVal string) int {
 }
 
 // String转Float64
+// author: CavanLiu
 func String2Float64(strVal string) float64 {
 	var value float64
 	

@@ -568,7 +568,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 	var regulation Regulation
 	
 	regulationBytes, err := stub.GetState("regulation" + strconv.Itoa(0))
-	if regulationId == nil {
+	if regulationId == null {
 		fmt.Println("Error unmarshalling cp " + regulationId)
 		return regulation, errors.New("Error unmarshalling cp " + regulationId)
 	}

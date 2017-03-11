@@ -37,7 +37,6 @@ type Expert struct {
 	Credit      int      `json:"credit"`
 }
 
-
 type Transaction struct{
 	ID                      string    `json:"id"`
 	UserID                  string    `json:"userId"`
@@ -202,39 +201,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation")
-}
-
-//存储消息信息
-func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var transaction Transaction
-	transaction = Transaction{ID:"transaction"+strconv.Itoa(transactionNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",ExpertAgree:"",CreateTime:"",Comment:"List all Info"}
-
-	transactionBytes,err := json.Marshal(&transaction)
-	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
-	if err != nil {
-		return nil, err
-	}
-	transactionNo = transactionNo + 1
-	return nil,nil
-}
-
-
-func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var regulation  Regulation
-	regulation = Regulation{ID:"regulation"+strconv.Itoa(regulationNo),TransactionDay:5,EarningRate:0.5,LosingRate:0.5,
-		ExpireEarningRate:0.5,ExpireLosingRate:0.5,ExpireEarningRateByUser:0.4,ExpireLosingRateByUser:0.5,RegulationBreak:0.5,
-		Name:"RegulationName"}
-
-	regulationBytes,err := json.Marshal(&regulation)
-	err = stub.PutState("regulation"+strconv.Itoa(transactionNo), regulationBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	regulationNo = regulationNo +1
-
-	return nil,nil
 }
 
 //用户给理财师发送投资申请
@@ -526,6 +492,44 @@ func GetAllStocks(stub shim.ChaincodeStubInterface)([]Stock,error){
 
 	return allStocks,nil
 }
+
+//存入Transaction信息
+func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var transaction Transaction
+	
+	var userId string 		= args[0]
+	var expertId string 	= args[1]
+	var stockId string 		= args[2]
+	var investMeony int 	= String2Int(args[3])
+	var regulationType int 	= String2Int(args[4])
+	var msgId int 			= String2Int(args[5])
+	var userAgree string 	= args[6]
+	var expertAgree string 	= args[7]
+	var createTime string 	= args[8]
+	var comment string 		= args[9]
+	
+	transaction = Transaction{
+						ID:"transaction"+strconv.Itoa(transactionNo),
+						UserID:userId,
+						ExpertID:expertId,
+						StockID:stockId,
+						InvestMoney:investMeony,
+						RegulationType:regulationType,
+						MsgId:msgId,
+						UserAgree:userAgree,
+						ExpertAgree:expertAgree,
+						CreateTime:createTime,
+						Comment:comment}
+
+	transactionBytes,err := json.Marshal(&transaction)
+	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
+	if err != nil {
+		return nil, err
+	}
+	transactionNo = transactionNo + 1
+	return nil,nil
+}
+
 //获取某个Transaction信息
 func GetTransaction(stub shim.ChaincodeStubInterface,transactionID string)(Transaction,error){
 	var transaction Transaction
@@ -542,7 +546,6 @@ func GetTransaction(stub shim.ChaincodeStubInterface,transactionID string)(Trans
 
 	return transaction, nil
 }
-
 
 //获取全部Transaction信息
 func GetAllTransaction(stub shim.ChaincodeStubInterface)([]Transaction,error){
@@ -574,6 +577,32 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 	}
 
 	return allStockHolder ,nil
+}
+
+// 存入规则
+func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var regulation  Regulation
+	regulation = Regulation{
+					ID:"regulation"+strconv.Itoa(regulationNo),
+					TransactionDay:5,
+					EarningRate:0.5,
+					LosingRate:0.5,
+					ExpireEarningRate:0.5,
+					ExpireLosingRate:0.5,
+					ExpireEarningRateByUser:0.4,
+					ExpireLosingRateByUser:0.5,
+					RegulationBreak:0.5,
+					Name:"RegulationName"}
+
+	regulationBytes,err := json.Marshal(&regulation)
+	err = stub.PutState("regulation"+strconv.Itoa(transactionNo), regulationBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	regulationNo = regulationNo +1
+
+	return nil,nil
 }
 
 // add by xubing

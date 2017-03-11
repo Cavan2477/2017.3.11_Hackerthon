@@ -195,6 +195,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.writeTransaction(stub,args)
 	}else if function == "writeRegulation"{
 		return t.writeRegulation(stub,args)
+	}else if function == "CreateRegulation"{
+		return t.CreateRegulation(stub,args)
 	}else if function == "MsgOne"{
 		return t.msgOne(stub,args)
 	}

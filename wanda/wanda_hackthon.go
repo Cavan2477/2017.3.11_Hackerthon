@@ -633,6 +633,7 @@ func String2Int(strVal string)(int, error) {
 	value, err := strconv.Atoi(strVal)
 	
 	if err != nil { 
+		fmt.Println("Error: convert string to int...")
 		return -1, err 
 	}
 	
@@ -640,12 +641,13 @@ func String2Int(strVal string)(int, error) {
 }
 
 // String转Float64
-func String2Float64(strVal string)(Float64, error) {
+func String2Float64(strVal string)(float64, error) {
 	var value float64
 	
 	value, err := strconv.ParseFloat(strVal, 64)
 	
 	if err != nil { 
+		fmt.Println("Error: convert string to float64...")
 		return -1, err 
 	}
 	

@@ -587,27 +587,27 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
 	var regulation Regulation
 	
-	var transactionDay 			= strconv.Atoi(args[0])
-	var earningRate 			= ParseFloat(args[1], 64)
-	var losingRate 				= ParseFloat(args[2], 64)
+	var transactionDay 			= String2Int(args[0])
+	/*var earningRate,err 		:= ParseFloat(args[1], 64)
+	var losingRate,err 			:= ParseFloat(args[2], 64)
 	var expireEarningRate 		= ParseFloat(args[3], 64)
 	var expireLosingRate 		= ParseFloat(args[4], 64)
 	var expireEarningRateByUser = ParseFloat(args[5], 64)
 	var expireLosingRateByUser 	= ParseFloat(args[6], 64)
 	var regulationBreak 		= ParseFloat(args[7], 64)
-	var name 					= args[8]
+	var name 					= args[8]*/
 	
 	regulation = Regulation {
 						ID:"regulation" + strconv.Itoa(regulationNo), 
 						TransactionDay:transactionDay, 
-						EarningRate:earningRate, 
+						/*EarningRate:earningRate, 
 						LosingRate:losingRate,
 						ExpireEarningRate:expireEarningRate,
 						ExpireLosingRate:expireLosingRate,
 						ExpireEarningRateByUser:expireEarningRateByUser,
 						ExpireLosingRateByUser:expireLosingRateByUser,
 						RegulationBreak:regulationBreak,
-						Name:name,
+						Name:name,*/
 						}
 	
 	regulationBytes,err := json.Marshal(&regulation)
@@ -618,7 +618,18 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 		return nil, err
 	}
 	
-	regulation = regulationNo + 1
+	regulationNo += 1
 	
 	return nil, nil
+}
+
+// String转Int
+func String2Int(stub shim.ChaincodeStubInterface, strVal string)(int, error) {
+	var value, err := strconv.Atoi(strVal)
+	
+	if err != nil { 
+		return nil,err 
+	}
+	
+	return value, nil
 }

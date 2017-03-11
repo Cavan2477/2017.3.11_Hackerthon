@@ -660,7 +660,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)([]byte, e
 	err = stub.PutState("regulation" + strconv.Itoa(regulationNo), regulationBytes)
 	if err != nil {
 		fmt.Println("Error: Create regulation failure...")
-		return regulation, err
+		return nil, err
 	}
 	
 	regulationNo += 1

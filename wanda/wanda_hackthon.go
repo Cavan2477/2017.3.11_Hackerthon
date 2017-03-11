@@ -419,20 +419,6 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 			fmt.Println("All success, returning allcps")
 			return allCPsBytes, nil
 		}
-	}else if function == "CreateRegulation"{
-		allCPs, err := CreateRegulation(stub, args)
-		if err != nil {
-			fmt.Println("Error from getallcps")
-			return nil, err
-		} else {
-			allCPsBytes, err1 := json.Marshal(&allCPs)
-			if err1 != nil {
-				fmt.Println("Error marshalling allcps")
-				return nil, err1
-			}
-			fmt.Println("All success, returning allcps")
-			return allCPsBytes, nil
-		}
 	}
 
 	return nil,errors.New("Query failure ...")

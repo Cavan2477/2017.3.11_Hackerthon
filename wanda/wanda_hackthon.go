@@ -44,12 +44,26 @@ type Contract struct{
 }
 
 type Message struct{
-	ID           string   `json:"id"`
-	UserID       string   `json:"userId"`
-	ExpertID     string   `json:"expertId"`
-	StockID      string   `json:"stockId"`
-	InvestMoney  int      `json:"investMeony"`
-	MessageType  int      `json:"messageType"`
+	ID                      string    `json:"id"`
+	UserID                  string    `json:"userId"`
+	ExpertID                string    `json:"expertId"`
+	StockID                 string    `json:"stockId"`
+	InvestMoney             int       `json:"investMeony"`
+	RegulationType          int       `json:"regulationType"`
+	MsgId                  int       `json:"msgId"`
+	//  1   用户给理财师发送投资申请
+	//  2   理财师给用户发送投资
+	//  3   用户给理财师发送投资申请
+	//  4   理财师给用户推荐股票
+	//  5   理财师推荐用户卖出股票
+
+	UserAgree               string    `json:"userAgree"`   //用户是否接受投资协议
+
+	MsgOneTime             string    `json:"stepOneTime"`
+	MsgTwoTime             string    `json:"stepTwoTime"`
+	MsgThreeTime           string    `json:"stepThreeTime"`
+	MsgFourTime            string    `json:"stepFourTime"`
+	MsgFiveTime            string    `json:"stepFiveTime"`
 }
 
 type  StockHolder struct{
@@ -66,12 +80,26 @@ type  StockHolder struct{
 
 //to do       add  regulation struct
 type Regulation struct{
+	ID		   string   `json:"id"`
+	TransactionDay     int      `json:"transDay"`
+	EarningRate        float64  `json:"earningRate"`
+	LosingRate         float64  `json:"losingRate"`
 
+	ExpireEarningRate        float64    `json:"expireEarningRate"`
+	ExpireLosingRate         float64    `json:"expireLosingRate"`
+
+	ExpireEarningRateByUser  float64    `json:"expireEarningRate"`
+	ExpireLosingRateByUser   float64    `json:"expireEarningRate"`
+
+	RegulationBreak          float64    `json:"expireEarningRate"`
+
+	Name                     string     `json:"name"`
 }
 
 var contractNo = 0  //从零开始
 var messageNo = 0; //message number
 var stockHolderNo = 0;
+var regulationNo = 0;
 
 func main() {
 	err := shim.Start(new(SimpleChaincode))
@@ -140,6 +168,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.writeStockHolder(stub,args)
 	}else if function == "writeMessage"{
 		return t.writeMessage(stub,args)
+	}else if function == "writeRegulation"{
+		return t.writeRegulation(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -160,12 +190,12 @@ func (t *SimpleChaincode) writeContract(stub shim.ChaincodeStubInterface, args [
 	return nil,nil
 }
 
-
 //存储消息信息
 func (t *SimpleChaincode) writeMessage(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var message Message
 	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,MessageType:0}
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
 
 	messageBytes,err := json.Marshal(&message)
 	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
@@ -175,6 +205,101 @@ func (t *SimpleChaincode) writeMessage(stub shim.ChaincodeStubInterface, args []
 	messageNo = messageNo + 1
 	return nil,nil
 }
+
+
+func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var regulation  Regulation
+	regulation = Regulation{ID:"regulation"+strconv.Itoa(regulationNo),TransactionDay:5,EarningRate:0.5,LosingRate:0.5,
+	ExpireEarningRate:0.5,ExpireLosingRate:0.5,ExpireEarningRateByUser:0.4,ExpireLosingRateByUser:0.5,RegulationBreak:0,5,
+	Name:"RegulationName"}
+
+	regulationBytes,err := json.Marshal(&regulation)
+	err = stub.PutState("regulation"+strconv.Itoa(messageNo), regulationBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	regulation = regulation +1
+
+	return nil,nil
+}
+
+//用户给理财师发送投资申请
+func (t *SimpleChaincode) msgOne(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var message Message
+	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
+
+	messageBytes,err := json.Marshal(&message)
+	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
+	if err != nil {
+		return nil, err
+	}
+	return nil,nil
+}
+
+//用户给理财师发送投资申请
+func (t *SimpleChaincode) msgTwo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var message Message
+	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
+
+	messageBytes,err := json.Marshal(&message)
+	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
+	if err != nil {
+		return nil, err
+	}
+	return nil,nil
+}
+
+//用户给理财师发送投资申请
+func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var message Message
+	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
+
+	messageBytes,err := json.Marshal(&message)
+	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
+	if err != nil {
+		return nil, err
+	}
+	return nil,nil
+}
+
+
+//用户给理财师发送投资申请
+func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var message Message
+	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
+
+	messageBytes,err := json.Marshal(&message)
+	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
+	if err != nil {
+		return nil, err
+	}
+	return nil,nil
+}
+
+//用户给理财师发送投资申请
+func (t *SimpleChaincode) msgFive(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var message Message
+	message = Message{ID:"message"+strconv.Itoa(messageNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
+		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",MsgOneTime:"",MsgTwoTime:"",MsgThreeTime:"",
+		MsgFourTime:"",MsgFiveTime:""}
+
+	messageBytes,err := json.Marshal(&message)
+	err = stub.PutState("message"+strconv.Itoa(messageNo), messageBytes)
+	if err != nil {
+		return nil, err
+	}
+	return nil,nil
+}
+
 
 //存储股票购买记录信息
 func (t *SimpleChaincode) writeStockHolder(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -289,6 +414,20 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		}
 	}else if function == "GetAllStockHolder"{
 		allCPs, err := GetAllStockHolder(stub)
+		if err != nil {
+			fmt.Println("Error from getallcps")
+			return nil, err
+		} else {
+			allCPsBytes, err1 := json.Marshal(&allCPs)
+			if err1 != nil {
+				fmt.Println("Error marshalling allcps")
+				return nil, err1
+			}
+			fmt.Println("All success, returning allcps")
+			return allCPsBytes, nil
+		}
+	}else if function == "GetRegulation"{
+		allCPs, err := GetRegulation(stub)
 		if err != nil {
 			fmt.Println("Error from getallcps")
 			return nil, err
@@ -424,7 +563,14 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 }
 
 //to do    get  regulation
-//func GetRegulation(stub shim.ChaincodeStubInterface)(,error){
-//}
+func GetRegulation(stub shim.ChaincodeStubInterface)(Regulation,error){
+	var regulation Regulation
+	regulationBytes, err := stub.GetState( "regulation"+strconv.Itoa(0))
 
+	err = json.Unmarshal(regulationBytes, &regulation)
+	if err != nil {
+		return regulation, errors.New("Error retrieving contract")
+	}
 
+	return regulation,nil
+}

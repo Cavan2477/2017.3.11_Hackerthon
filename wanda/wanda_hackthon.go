@@ -587,7 +587,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
 	var regulation Regulation
 	
-	var transactionDay 			= String2Int(stub, args[0])
+	var transactionDay 			= String2Int(args[0])
 	/*var earningRate,err 		:= ParseFloat(args[1], 64)
 	var losingRate,err 			:= ParseFloat(args[2], 64)
 	var expireEarningRate 		= ParseFloat(args[3], 64)
@@ -615,7 +615,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	err = stub.PutState("regulation" + strconv.Itoa(regulationNo), regulationBytes)
 	if err != nil {
 		fmt.Println("Error: Create regulation failure...")
-		return nil, err
+		return regulation, err
 	}
 	
 	regulationNo += 1
@@ -624,7 +624,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 }
 
 // String转Int
-func String2Int(stub shim.ChaincodeStubInterface, strVal string)(int, error) {
+func String2Int(strVal string)(int, error) {
 	var value int
 	
 	value, err := strconv.Atoi(strVal)

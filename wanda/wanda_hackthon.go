@@ -526,7 +526,9 @@ func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return nil, err
 	}
-	transactionNo = transactionNo + 1
+	
+	transactionNo += 1
+	
 	return nil,nil
 }
 

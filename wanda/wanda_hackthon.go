@@ -643,7 +643,7 @@ func String2Int(strVal string)(int, error) {
 func String2Float64(strVal string)(Float64, error) {
 	var value Float64
 	
-	value, err := ParseFloat(strVal, 64)
+	value, err := strconv.ParseFloat(strVal, 64)
 	
 	if err != nil { 
 		return -1, err 

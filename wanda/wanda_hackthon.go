@@ -42,6 +42,7 @@ type Transaction struct{
 	UserID                  string    `json:"userId"`
 	ExpertID                string    `json:"expertId"`
 	StockID                 string    `json:"stockId"`
+	StockName				string    `json:"stockName"`
 	InvestMoney             int       `json:"investMeony"`
 	RegulationType          int       `json:"regulationType"`
 	MsgId                  int       `json:"msgId"`
@@ -199,6 +200,14 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.CreateRegulation(stub,args)
 	}else if function == "MsgOne"{
 		return t.msgOne(stub,args)
+	}else if function == "MsgTwo"{
+		return t.msgTwo(stub,args)
+	}else if function == "MsgThree"{
+		return t.msgThree(stub,args)
+	}else if function == "MsgFour"{
+		return t.msgFour(stub,args)
+	}else if(function == "MsgFive"){
+		return t.msgFive(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -228,12 +237,22 @@ func (t *SimpleChaincode) msgOne(stub shim.ChaincodeStubInterface, args []string
 
 //用户给理财师发送投资申请
 func (t *SimpleChaincode) msgTwo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var timeStr = time.Now().Format("2006-01-02 15:04:05")
+	var err error
+
 	var transaction Transaction
-	transaction = Transaction{ID:"transaction"+strconv.Itoa(transactionNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",ExpertAgree:"",CreateTime:""}
+	transaction, _ = GetTransaction(stub,args[0])
+
+	transaction.RegulationType,err = strconv.Atoi(args[1])
+	if err !=nil{
+		return nil,err
+	}
+	transaction.MsgId = 2
+	transaction.CreateTime = timeStr
+
 
 	transactionBytes,err := json.Marshal(&transaction)
-	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
+	err = stub.PutState(transaction.ID, transactionBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -242,12 +261,19 @@ func (t *SimpleChaincode) msgTwo(stub shim.ChaincodeStubInterface, args []string
 
 //用户给理财师发送投资申请
 func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var timeStr = time.Now().Format("2006-01-02 15:04:05")
+	var err error
+
 	var transaction Transaction
-	transaction = Transaction{ID:"transaction"+strconv.Itoa(transactionNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",ExpertAgree:"",CreateTime:""}
+	transaction,_ = GetTransaction(stub,args[0])
+
+	transaction.MsgId = 3
+	transaction.CreateTime = timeStr
+	transaction.UserAgree=args[1]
+
 
 	transactionBytes,err := json.Marshal(&transaction)
-	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
+	err = stub.PutState(transaction.ID, transactionBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -257,12 +283,19 @@ func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []stri
 
 //用户给理财师发送投资申请
 func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var timeStr = time.Now().Format("2006-01-02 15:04:05")
+	var err error
+
 	var transaction Transaction
-	transaction = Transaction{ID:"transaction"+strconv.Itoa(transactionNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",ExpertAgree:"",CreateTime:""}
+	transaction,_ = GetTransaction(stub,args[0])
+
+	transaction.MsgId = 4
+	transaction.CreateTime = timeStr
+	transaction.StockID = args[1]
+	transaction.StockName = args[2]
 
 	transactionBytes,err := json.Marshal(&transaction)
-	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
+	err = stub.PutState(transaction.ID, transactionBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -271,15 +304,21 @@ func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []strin
 
 //用户给理财师发送投资申请
 func (t *SimpleChaincode) msgFive(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var timeStr = time.Now().Format("2006-01-02 15:04:05")
+	var err error
+
 	var transaction Transaction
-	transaction = Transaction{ID:"transaction"+strconv.Itoa(transactionNo),UserID:"xiaowang",ExpertID:"LiLaoShi",StockID:"",
-		InvestMoney:10000,RegulationType:0,MsgId:0,UserAgree:"",ExpertAgree:"",CreateTime:""}
+	transaction,_ = GetTransaction(stub,args[0])
+
+	transaction.MsgId = 5
+	transaction.CreateTime = timeStr
 
 	transactionBytes,err := json.Marshal(&transaction)
-	err = stub.PutState("transaction"+strconv.Itoa(transactionNo), transactionBytes)
+	err = stub.PutState(transaction.ID, transactionBytes)
 	if err != nil {
 		return nil, err
 	}
+
 	return nil,nil
 }
 
@@ -488,19 +527,21 @@ func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, arg
 	var userId string 		= args[0]
 	var expertId string 	= args[1]
 	var stockId string 		= args[2]
-	var investMeony int 	= String2Int(args[3])
-	var regulationType int 	= String2Int(args[4])
-	var msgId int 			= String2Int(args[5])
-	var userAgree string 	= args[6]
-	var expertAgree string 	= args[7]
-	var createTime string 	= args[8]
-	var comment string 		= args[9]
+	var stockName string 	= args[3]
+	var investMeony int 	= String2Int(args[4])
+	var regulationType int 	= String2Int(args[5])
+	var msgId int 			= String2Int(args[6])
+	var userAgree string 	= args[7]
+	var expertAgree string 	= args[8]
+	var createTime string 	= args[9]
+	var comment string 		= args[10]
 	
 	transaction = Transaction{
 						ID:"transaction"+strconv.Itoa(transactionNo),
 						UserID:userId,
 						ExpertID:expertId,
 						StockID:stockId,
+						StockName:stockName,
 						InvestMoney:investMeony,
 						RegulationType:regulationType,
 						MsgId:msgId,

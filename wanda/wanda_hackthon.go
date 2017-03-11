@@ -424,6 +424,7 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 }
 
 //to do    get  regulation
-func GetRegulation(stub shim.ChaincodeStubInterface)(,error){
+//func GetRegulation(stub shim.ChaincodeStubInterface)(,error){
+//}
 
-}
+

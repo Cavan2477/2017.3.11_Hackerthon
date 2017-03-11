@@ -630,7 +630,7 @@ func String2Int(stub shim.ChaincodeStubInterface, strVal string)(int, error) {
 	value, err := strconv.Atoi(strVal)
 	
 	if err != nil { 
-		return nil, err 
+		return -1, err 
 	}
 	
 	return value, nil

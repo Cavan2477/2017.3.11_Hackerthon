@@ -427,7 +427,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 			return allCPsBytes, nil
 		}
 	}else if function == "GetRegulation"{
-		allCPs, err := GetRegulation(stub, args)
+		allCPs, err := GetRegulation(stub, args[0])
 		if err != nil {
 			fmt.Println("Error from getallcps")
 			return nil, err

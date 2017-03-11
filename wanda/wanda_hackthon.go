@@ -219,7 +219,7 @@ func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args
 		return nil, err
 	}
 
-	regulation = regulation +1
+	regulation = regulationNo + 1
 
 	return nil,nil
 }
@@ -427,7 +427,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 			return allCPsBytes, nil
 		}
 	}else if function == "GetRegulation"{
-		allCPs, err := GetRegulation(stub)
+		allCPs, err := GetRegulation(stub, args)
 		if err != nil {
 			fmt.Println("Error from getallcps")
 			return nil, err

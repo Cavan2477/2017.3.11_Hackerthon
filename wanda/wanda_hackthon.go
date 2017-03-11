@@ -219,7 +219,7 @@ func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args
 		return nil, err
 	}
 
-	regulation = regulationNo + 1
+	regulationNo += 1
 
 	return nil,nil
 }

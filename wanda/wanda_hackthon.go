@@ -210,7 +210,7 @@ func (t *SimpleChaincode) writeMessage(stub shim.ChaincodeStubInterface, args []
 func (t *SimpleChaincode) writeRegulation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var regulation  Regulation
 	regulation = Regulation{ID:"regulation"+strconv.Itoa(regulationNo),TransactionDay:5,EarningRate:0.5,LosingRate:0.5,
-	ExpireEarningRate:0.5,ExpireLosingRate:0.5,ExpireEarningRateByUser:0.4,ExpireLosingRateByUser:0.5,RegulationBreak:0,5,
+	ExpireEarningRate:0.5,ExpireLosingRate:0.5,ExpireEarningRateByUser:0.4,ExpireLosingRateByUser:0.5,RegulationBreak:0.5,
 	Name:"RegulationName"}
 
 	regulationBytes,err := json.Marshal(&regulation)
@@ -562,15 +562,64 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 	return allStockHolder ,nil
 }
 
-//to do    get  regulation
-func GetRegulation(stub shim.ChaincodeStubInterface)(Regulation,error){
+// 获取指定规则信息
+// author: CavanLiu
+func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regulation,error){
 	var regulation Regulation
-	regulationBytes, err := stub.GetState( "regulation"+strconv.Itoa(0))
+	
+	regulationBytes, err := stub.GetState("regulation" + strconv.Itoa(0))
+	if regulationId == nil {
+		fmt.Println("Error unmarshalling cp " + regulationId)
+		return regulation, errors.New("Error unmarshalling cp " + regulationId)
+	}
 
 	err = json.Unmarshal(regulationBytes, &regulation)
 	if err != nil {
+		fmt.Println("Error unmarshalling cp " + regulationId)
 		return regulation, errors.New("Error retrieving contract")
 	}
 
 	return regulation,nil
 }
+
+// 生成规则
+// author: CavanLiu
+func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
+	var regulation Regulation
+	
+	var transactionDay 			= args[0]
+	var earningRate 			= args[1]
+	var losingRate 				= args[2]
+	var expireEarningRate 		= args[3]
+	var expireLosingRate 		= args[4]
+	var expireEarningRateByUser = args[5]
+	var expireLosingRateByUser 	= args[6]
+	var regulationBreak 		= args[7]
+	var name 					= args[8]
+	
+	regulation = Regulation {
+						ID:"regulation" + strconv.Itoa(regulationNo), 
+						TransactionDay:transactionDay, 
+						EarningRate:earningRate, 
+						LosingRate:losingRate,
+						ExpireEarningRate:expireEarningRate,
+						ExpireLosingRate:expireLosingRate,
+						ExpireEarningRateByUser:expireEarningRateByUser,
+						ExpireLosingRateByUser:expireLosingRateByUser,
+						RegulationBreak:regulationBreak,
+						Name:name
+	}
+	
+	regulationBytes,err := json.Marshal(&regulation)
+	
+	err = stub.PutState("regulation" + strconv.Itoa(regulationNo), regulationBytes)
+	if err != nil {
+		fmt.Println("Error: Create regulation failure...")
+		return nil, err
+	}
+	
+	regulation = regulation + 1
+	
+	return nil, nil
+}
+

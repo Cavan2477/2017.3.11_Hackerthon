@@ -613,7 +613,7 @@ func GetAllRegulation(stub shim.ChaincodeStubInterface) ([]Regulation, error) {
 func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regulation,error){
 	var regulation Regulation
 	
-	regulationBytes, err := stub.GetState("regulation" + regulationId)
+	regulationBytes, err := stub.GetState(regulationId)
 	if regulationId == "" {
 		fmt.Println("Error unmarshalling cp " + regulationId)
 		return regulation, errors.New("Error unmarshalling cp " + regulationId)
@@ -630,7 +630,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 
 // 生成规则
 // author: CavanLiu
-func (t *SimpleChaincode) CreateRegulation(stub shim.ChaincodeStubInterface, args []string)([]byte, error) {
+func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)([]byte, error) {
 	var regulation Regulation
 	
 	var transactionDay int 				= String2Int(args[0])

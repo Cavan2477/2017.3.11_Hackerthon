@@ -587,14 +587,14 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
 	var regulation Regulation
 	
-	var transactionDay 			= args[0]
-	var earningRate 			= args[1]
-	var losingRate 				= args[2]
-	var expireEarningRate 		= args[3]
-	var expireLosingRate 		= args[4]
-	var expireEarningRateByUser = args[5]
-	var expireLosingRateByUser 	= args[6]
-	var regulationBreak 		= args[7]
+	var transactionDay 			= strconv.Atoi(args[0])
+	var earningRate 			= ParseFloat(args[1], 64)
+	var losingRate 				= ParseFloat(args[2], 64)
+	var expireEarningRate 		= ParseFloat(args[3], 64)
+	var expireLosingRate 		= ParseFloat(args[4], 64)
+	var expireEarningRateByUser = ParseFloat(args[5], 64)
+	var expireLosingRateByUser 	= ParseFloat(args[6], 64)
+	var regulationBreak 		= ParseFloat(args[7], 64)
 	var name 					= args[8]
 	
 	regulation = Regulation {

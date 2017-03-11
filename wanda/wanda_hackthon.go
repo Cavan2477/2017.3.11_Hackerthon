@@ -561,12 +561,12 @@ func GetAllRegulation(stub shim.ChaincodeStubInterface) ([]Regulation, error) {
        return allRegulations, nil
 }
 
-// 获取指定规则信息
+// 依据规则id获取规则内容
 // author: CavanLiu
 func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regulation,error){
 	var regulation Regulation
 	
-	regulationBytes, err := stub.GetState("regulation" + strconv.Itoa(0))
+	regulationBytes, err := stub.GetState("regulation" + regulationId)
 	if regulationId == "" {
 		fmt.Println("Error unmarshalling cp " + regulationId)
 		return regulation, errors.New("Error unmarshalling cp " + regulationId)
@@ -578,7 +578,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 		return regulation, errors.New("Error retrieving contract")
 	}
 
-	return regulation,nil
+	return regulation, nil
 }
 
 // 生成规则

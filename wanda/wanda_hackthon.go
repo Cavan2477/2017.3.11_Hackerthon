@@ -94,6 +94,13 @@ var transactionNo = 0; //transaction number
 var stockHolderNo = 0;
 var regulationNo = 0;
 
+var stockOne = [5]int{100,89,92,103,96}
+var stockTwo = [5]int{100,95,110,116,102}
+var stockThree = [5]int{100,89,95,111,105}
+var stockFour = [5]int{100,106,99,108,118}
+
+var dayNo = 0
+
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
@@ -208,6 +215,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.msgFour(stub,args)
 	}else if(function == "MsgFive"){
 		return t.msgFive(stub,args)
+	}else if(function == "MonitorDay"){
+		return t.monitorDay(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -235,7 +244,7 @@ func (t *SimpleChaincode) msgOne(stub shim.ChaincodeStubInterface, args []string
 	return nil,nil
 }
 
-//用户给理财师发送投资申请
+//理财师给用户发送投资协议
 func (t *SimpleChaincode) msgTwo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
@@ -259,7 +268,7 @@ func (t *SimpleChaincode) msgTwo(stub shim.ChaincodeStubInterface, args []string
 	return nil,nil
 }
 
-//用户给理财师发送投资申请
+//用户同意理财师的投资协议
 func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
@@ -281,7 +290,7 @@ func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []stri
 }
 
 
-//用户给理财师发送投资申请
+//理财师给用户推荐股票
 func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
@@ -302,7 +311,7 @@ func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []strin
 	return nil,nil
 }
 
-//用户给理财师发送投资申请
+//用户通知理财师股票已卖出
 func (t *SimpleChaincode) msgFive(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
@@ -516,6 +525,17 @@ func GetExpert(expertId string, stub shim.ChaincodeStubInterface) (Expert, error
 	}
 
 	return expert, nil
+}
+
+//模拟当前第几天数
+func (t *SimpleChaincode) monitorDay(stub shim.ChaincodeStubInterface, day string)([]byte, error) {
+	plusDay,err := strconv.Atoi(day)
+	if err != nil{
+		return nil,nil
+	}
+	dayNo = dayNo + plusDay
+
+	return nil,nil
 }
 
 // 依据股票ID获取股票信息
@@ -742,3 +762,5 @@ func (t *SimpleChaincode) CreateRegulation(stub shim.ChaincodeStubInterface, arg
 	
 	return nil, nil
 }
+
+

@@ -24,10 +24,10 @@ type User struct {
 }
 
 type Stock struct {
-	ID	    string   `json:"id"`  //从一开始
+	ID	    	string   `json:"id"`  //从一开始
+	Name 		string 	 `json:"name"`
 	Price       int      `json:"price"`
 }
-
 
 type Expert struct {
 	ID          string   `json:"id"`
@@ -503,6 +503,25 @@ func GetExpert(expertId string, stub shim.ChaincodeStubInterface) (Expert, error
 	return expert, nil
 }
 
+// 依据股票ID获取股票信息
+// Author: CavanLiu
+func GetStock(stub shim.ChaincodeStubInterface, stockId string) (Stock, error) {
+	var stock Stock
+
+	stockBytes, err := stub.GetState(stockId)
+	if err != nil {
+		fmt.Println("Error retrieving cp " + stockId)
+		return stock, errors.New("Error retrieving cp " + stockId)
+	}
+
+	err = json.Unmarshal(stockBytes, &stock)
+	if err != nil {
+		fmt.Println("Error unmarshalling cp " + stockId)
+		return expert, errors.New("Error unmarshalling cp " + stockId)
+	}
+
+	return stock, nil
+}
 
 //获取全部股票信息
 func GetAllStocks(stub shim.ChaincodeStubInterface)([]Stock,error){

@@ -504,7 +504,7 @@ func GetExpert(expertId string, stub shim.ChaincodeStubInterface) (Expert, error
 }
 
 // 依据股票ID获取股票信息
-// Author: CavanLiu
+// Author: CavanLiu 
 func GetStock(stub shim.ChaincodeStubInterface, stockId string) (Stock, error) {
 	var stock Stock
 

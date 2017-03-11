@@ -70,20 +70,20 @@ type  StockHolder struct{
 	SaledMoney        int      `json:"saledMoney"`
 }
 
-//to do       add  regulation struct
+// regulation struct
 type Regulation struct{
 	ID		   string   `json:"id"`
-	TransactionDay     int      `json:"transDay"`
+	TransactionDay     int      `json:"transactionDay"`
 	EarningRate        float64  `json:"earningRate"`
 	LosingRate         float64  `json:"losingRate"`
 
 	ExpireEarningRate        float64    `json:"expireEarningRate"`
 	ExpireLosingRate         float64    `json:"expireLosingRate"`
 
-	ExpireEarningRateByUser  float64    `json:"expireEarningRate"`
-	ExpireLosingRateByUser   float64    `json:"expireEarningRate"`
+	ExpireEarningRateByUser  float64    `json:"expireEarningRateByUser"`
+	ExpireLosingRateByUser   float64    `json:"expireLosingRateByUser"`
 
-	RegulationBreak          float64    `json:"expireEarningRate"`
+	RegulationBreak          float64    `json:"regulationBreak"`
 
 	Name                     string     `json:"name"`
 }

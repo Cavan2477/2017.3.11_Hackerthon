@@ -625,12 +625,12 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 
 // String转Int
 func String2Int(stub shim.ChaincodeStubInterface, strVal string)(int, error) {
-	var value
+	var value int
 	
 	value, err := strconv.Atoi(strVal)
 	
 	if err != nil { 
-		return nil,err 
+		return nil, err 
 	}
 	
 	return value, nil

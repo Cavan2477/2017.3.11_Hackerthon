@@ -630,7 +630,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 
 // 生成规则
 // author: CavanLiu
-func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
+func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)([]byte, error) {
 	var regulation Regulation
 	
 	var transactionDay int 				= String2Int(args[0])
@@ -665,5 +665,5 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	
 	regulationNo += 1
 	
-	return regulation, nil
+	return nil, nil
 }

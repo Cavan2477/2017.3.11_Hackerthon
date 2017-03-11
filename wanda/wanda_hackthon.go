@@ -548,19 +548,6 @@ func GetAllStockHolder(stub shim.ChaincodeStubInterface)([]StockHolder,error){
 	return allStockHolder ,nil
 }
 
-//to do    get  regulation
-func GetRegulation(stub shim.ChaincodeStubInterface)(Regulation,error){
-	var regulation Regulation
-	regulationBytes, err := stub.GetState( "regulation"+strconv.Itoa(0))
-
-	err = json.Unmarshal(regulationBytes, &regulation)
-	if err != nil {
-		return regulation, errors.New("Error retrieving contract")
-	}
-
-	return regulation,nil
-}
-
 // add by xubing
 func GetAllRegulation(stub shim.ChaincodeStubInterface) ([]Regulation, error) {
        var allRegulations []Regulation

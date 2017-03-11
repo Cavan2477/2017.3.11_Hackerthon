@@ -581,3 +581,44 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 
 	return regulation,nil
 }
+
+// 生成规则
+// author: CavanLiu
+func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulation, error) {
+	var regulation Regulation
+	
+	var transactionDay 			= args[0]
+	var earningRate 			= args[1]
+	var losingRate 				= args[2]
+	var expireEarningRate 		= args[3]
+	var expireLosingRate 		= args[4]
+	var expireEarningRateByUser = args[5]
+	var expireLosingRateByUser 	= args[6]
+	var regulationBreak 		= args[7]
+	var name 					= args[8]
+	
+	regulation = Regulation {
+						ID:"regulation" + strconv.Itoa(regulationNo), 
+						TransactionDay:transactionDay, 
+						EarningRate:earningRate, 
+						LosingRate:losingRate,
+						ExpireEarningRate:expireEarningRate,
+						ExpireLosingRate:expireLosingRate,
+						ExpireEarningRateByUser:expireEarningRateByUser,
+						ExpireLosingRateByUser:expireLosingRateByUser,
+						RegulationBreak:regulationBreak,
+						Name:name,
+						}
+	
+	regulationBytes,err := json.Marshal(&regulation)
+	
+	err = stub.PutState("regulation" + strconv.Itoa(regulationNo), regulationBytes)
+	if err != nil {
+		fmt.Println("Error: Create regulation failure...")
+		return nil, err
+	}
+	
+	regulation = regulationNo + 1
+	
+	return nil, nil
+}

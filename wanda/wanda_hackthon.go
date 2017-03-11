@@ -618,7 +618,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 		return nil, err
 	}
 	
-	regulation = regulation + 1
+	regulation = regulationNo + 1
 	
 	return nil, nil
 }

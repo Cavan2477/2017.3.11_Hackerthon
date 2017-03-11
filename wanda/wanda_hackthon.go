@@ -588,8 +588,8 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	var regulation Regulation
 	
 	var transactionDay int
-	var earningRate float64
-	/*var losingRate,err 			:= ParseFloat(args[2], 64)
+	/*var earningRate float64
+	var losingRate,err 			:= ParseFloat(args[2], 64)
 	var expireEarningRate 		= ParseFloat(args[3], 64)
 	var expireLosingRate 		= ParseFloat(args[4], 64)
 	var expireEarningRateByUser = ParseFloat(args[5], 64)
@@ -597,16 +597,9 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	var regulationBreak 		= ParseFloat(args[7], 64)
 	var name 					= args[8]*/
 	
-	transactionDay,err := String2Int(args[0])
-	if err != nil {
-		return regulation, err
-	}
-	
-	earningRate,err1 := String2Float64(args[1])
-	if err1 != nil {
-		return regulation, err1
-	}
-	
+	transactionDay = String2Int(args[0])
+	//earningRate = String2Float64(args[1])
+
 	regulation = Regulation {
 						ID:"regulation" + strconv.Itoa(regulationNo), 
 						TransactionDay:transactionDay, 
@@ -634,29 +627,29 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 }
 
 // String转Int
-func String2Int(strVal string)(int, error) {
+func String2Int(strVal string) int {
 	var value int
 	
 	value, err := strconv.Atoi(strVal)
 	
 	if err != nil { 
 		fmt.Println("Error: convert string to int...")
-		return -1, err 
+		return -1
 	}
 	
-	return value, nil
+	return value
 }
 
 // String转Float64
-func String2Float64(strVal string)(float64, error) {
+func String2Float64(strVal string) float64 {
 	var value float64
 	
 	value, err := strconv.ParseFloat(strVal, 64)
 	
 	if err != nil { 
 		fmt.Println("Error: convert string to float64...")
-		return -1, err 
+		return -1
 	}
 	
-	return value, nil
+	return value
 }

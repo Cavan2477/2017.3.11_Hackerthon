@@ -620,7 +620,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	
 	regulationNo += 1
 	
-	return nil, nil
+	return regulation, nil
 }
 
 // String转Int

@@ -588,8 +588,8 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	var regulation Regulation
 	
 	var transactionDay int
-	/*var earningRate float64
-	var losingRate,err 			:= ParseFloat(args[2], 64)
+	var earningRate float64
+	/*var losingRate,err 			:= ParseFloat(args[2], 64)
 	var expireEarningRate 		= ParseFloat(args[3], 64)
 	var expireLosingRate 		= ParseFloat(args[4], 64)
 	var expireEarningRateByUser = ParseFloat(args[5], 64)
@@ -598,7 +598,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 	var name 					= args[8]*/
 	
 	transactionDay = String2Int(args[0])
-	//earningRate = String2Float64(args[1])
+	earningRate = String2Float64(args[1])
 
 	regulation = Regulation {
 						ID:"regulation" + strconv.Itoa(regulationNo), 

@@ -665,8 +665,7 @@ func CreateRegulation(stub shim.ChaincodeStubInterface, args []string)(Regulatio
 						ExpireEarningRateByUser:expireEarningRateByUser,
 						ExpireLosingRateByUser:expireLosingRateByUser,
 						RegulationBreak:regulationBreak,
-						Name:name,
-						}
+						Name:name}
 	
 	regulationBytes,err := json.Marshal(&regulation)
 	

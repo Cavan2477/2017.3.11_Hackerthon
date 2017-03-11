@@ -216,7 +216,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	}else if(function == "MsgFive"){
 		return t.msgFive(stub,args)
 	}else if(function == "MonitorDay"){
-		return t.monitorDay(stub,args)
+		return t.monitorDay(stub,args[0])
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -762,5 +762,3 @@ func (t *SimpleChaincode) CreateRegulation(stub shim.ChaincodeStubInterface, arg
 	
 	return nil, nil
 }
-
-

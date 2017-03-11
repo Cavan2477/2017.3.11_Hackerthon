@@ -372,6 +372,21 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 			fmt.Println("All success, returning the cp")
 			return expertBytes, nil
 		}
+	}else if function == "GetStock"{
+		fmt.Println("GetStock")
+		stockCPs, err := GetStock(stub, args[0])
+		if err != nil {
+			fmt.Println("Error from GetStock")
+			return nil, err
+		} else {
+			stockBytes, err1 := json.Marshal(&stockCPs)
+			if err1 != nil {
+				fmt.Println("Error marshalling stockcps")
+				return nil, err1
+			}
+			fmt.Println("All success, returning stockcps")
+			return stockBytes, nil
+		}
 	}else if function == "GetAllStocks"{
 		fmt.Println("Getting all CPs")
 		allCPs, err := GetAllStocks(stub)
@@ -504,7 +519,7 @@ func GetExpert(expertId string, stub shim.ChaincodeStubInterface) (Expert, error
 }
 
 // 依据股票ID获取股票信息
-// Author: CavanLiu 
+// Author: CavanLiu
 func GetStock(stub shim.ChaincodeStubInterface, stockId string) (Stock, error) {
 	var stock Stock
 
@@ -517,7 +532,7 @@ func GetStock(stub shim.ChaincodeStubInterface, stockId string) (Stock, error) {
 	err = json.Unmarshal(stockBytes, &stock)
 	if err != nil {
 		fmt.Println("Error unmarshalling cp " + stockId)
-		return expert, errors.New("Error unmarshalling cp " + stockId)
+		return stock, errors.New("Error unmarshalling cp " + stockId)
 	}
 
 	return stock, nil

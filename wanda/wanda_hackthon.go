@@ -166,21 +166,21 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, err
 	}
 
-	stockOne = Stock{ID:"one",Price:100}
+	stockOne = Stock{ID:"1",Name:"one",Price:100}
 	stockOneBytes, err := json.Marshal(&stockOne)          //初始化股票一信息
 	err = stub.PutState("stock1", stockOneBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	stockTwo = Stock{ID:"Two",Price:100}
+	stockTwo = Stock{ID:"2",Name:"two",Price:100}
 	stockTwoBytes, err := json.Marshal(&stockTwo)         //初始化股票二信息
 	err = stub.PutState("stock2", stockTwoBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	stockThree = Stock{ID:"Three",Price:100}
+	stockThree = Stock{ID:"3",Name:"three",Price:100}
 	stockThreeBytes, err := json.Marshal(&stockThree)      //初始化股票三信息
 	err = stub.PutState("stock3", stockThreeBytes)
 	if err != nil {

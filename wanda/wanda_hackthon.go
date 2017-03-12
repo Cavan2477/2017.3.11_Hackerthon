@@ -8,6 +8,8 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"strconv"
+	"github.com/hyperledger-archives/fabric/core/chaincode/shim"
+	"os/user"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -26,7 +28,7 @@ type User struct {
 type Stock struct {
 	ID	    	string   `json:"id"`  //从一开始
 	Name 		string 	 `json:"name"`
-	Price       int      `json:"price"`
+	Code            string   `json:"name"`
 }
 
 type Expert struct {
@@ -42,10 +44,12 @@ type Transaction struct{
 	UserID                  string    `json:"userId"`
 	ExpertID                string    `json:"expertId"`
 	StockID                 string    `json:"stockId"`
-	StockName				string    `json:"stockName"`
+	StockCode               string    `json:"stockCode"`
+	StockName	         string      `json:"stockName"`
+	StockNumber             int	      `json:"stockNumber"`
 	InvestMoney             int       `json:"investMeony"`
 	RegulationType          int       `json:"regulationType"`
-	MsgId                  int       `json:"msgId"`
+	MsgId                   int       `json:"msgId"`
 								//  1   用户给理财师发送投资申请,等待理财师给用户发送协议
 								//  2   理财师给用户发送协议
 								//  3   用户给理财师发送投资申请
@@ -166,26 +170,44 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, err
 	}
 
-	stockOne = Stock{ID:"1",Name:"one",Price:100}
+	stockOne = Stock{ID:"stockOne",Name:"能链",Code:"001123"}
+	//stockOne = Stock{ID:"1",Name:"one",Price:100}
+
 	stockOneBytes, err := json.Marshal(&stockOne)          //初始化股票一信息
-	err = stub.PutState("stock1", stockOneBytes)
+	err = stub.PutState("stockOne", stockOneBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	stockTwo = Stock{ID:"2",Name:"two",Price:100}
+	stockTwo = Stock{ID:"stockTwo",Name:"宝碳",Code:"360000"}
+	//stockTwo = Stock{ID:"2",Name:"two",Price:100}
+
 	stockTwoBytes, err := json.Marshal(&stockTwo)         //初始化股票二信息
-	err = stub.PutState("stock2", stockTwoBytes)
+	err = stub.PutState("stockTwo", stockTwoBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	stockThree = Stock{ID:"3",Name:"three",Price:100}
+	stockThree = Stock{ID:"stockThree",Name:"万达院线",Code:"280000"}
+	//stockThree = Stock{ID:"3",Name:"three",Price:100}
+
 	stockThreeBytes, err := json.Marshal(&stockThree)      //初始化股票三信息
-	err = stub.PutState("stock3", stockThreeBytes)
+	err = stub.PutState("stockThre", stockThreeBytes)
 	if err != nil {
 		return nil, err
 	}
+
+	stockFour = Stock{ID:"stockFour",Name:"中国平安",Code:"659000"}
+	stockFourBytes, err := json.Marshal(&stockFour)      //初始化股票三信息
+	err = stub.PutState("stockFour", stockFourBytes)
+	if err != nil {
+		return nil, err
+	}
+	
+	// 初始化交易信息
+	msgOne("transaction0","50000","MsgOne")
+	msgTwo("transaction1", "yes")
+	msgFour("transaction2", "2", "")
 
 	return nil, nil
 }
@@ -217,8 +239,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.msgFive(stub,args)
 	}else if(function == "MonitorDay"){
 		return t.monitorDay(stub,args[0])
-	}else if(function == "SellStock"){
-		return t.SellStock(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -296,14 +316,49 @@ func (t *SimpleChaincode) msgThree(stub shim.ChaincodeStubInterface, args []stri
 func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
-
+	var user User
+	var expert Expert
 	var transaction Transaction
 	transaction,_ = GetTransaction(stub,args[0])
 
 	transaction.MsgId = 4
 	transaction.CreateTime = timeStr
-	transaction.StockID = args[1]
+	transaction.StockCode = args[1]
 	transaction.StockName = args[2]
+	transaction.StockID = args[3]
+
+	if(transaction.StockID == "stockOne"){
+		transaction.StockNumber = transaction.InvestMoney/stockOne[dayNo]
+	}else if (transaction.StockID == "stockTwo"){
+		transaction.StockNumber = transaction.InvestMoney/stockTwo[dayNo]
+	}else if (transaction.StockID == "stockThree"){
+		transaction.StockNumber = transaction.InvestMoney/stockThree[dayNo]
+	}else if (transaction.StockID  == "stockFour"){
+		transaction.StockNumber = transaction.InvestMoney/stockFour[dayNo]
+	}
+
+
+	user, err = GetUser("xiaowang",stub)
+	expert , err = GetExpert("LiLaoShi",stub)
+
+	user.RestMoney = user.RestMoney - transaction.InvestMoney
+	user.IcedMoney = user.IcedMoney + transaction.InvestMoney/10
+
+	expert.RestMoney = expert.RestMoney - transaction.InvestMoney
+	expert.IcedMoney = expert.IcedMoney + transaction.InvestMoney/10
+
+	userBytes, err := json.Marshal(&user)   //初始化用户信息
+	err = stub.PutState("user", userBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	expertBytes, err := json.Marshal(&expert)     //初始化理财师信息
+
+	err = stub.PutState("expert", expertBytes)
+	if err != nil {
+		return nil, err
+	}
 
 	transactionBytes,err := json.Marshal(&transaction)
 	err = stub.PutState(transaction.ID, transactionBytes)
@@ -317,12 +372,47 @@ func (t *SimpleChaincode) msgFour(stub shim.ChaincodeStubInterface, args []strin
 func (t *SimpleChaincode) msgFive(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var timeStr = time.Now().Format("2006-01-02 15:04:05")
 	var err error
-
+	var user User
+	var expert Expert
 	var transaction Transaction
 	transaction,_ = GetTransaction(stub,args[0])
 
 	transaction.MsgId = 5
 	transaction.CreateTime = timeStr
+
+	user, err = GetUser("xiaowang",stub)
+	expert , err = GetExpert("LiLaoShi",stub)
+
+	user.IcedMoney = user.IcedMoney + transaction.InvestMoney/10
+
+	expert.IcedMoney = expert.IcedMoney + transaction.InvestMoney/10
+
+	if(transaction.StockID == "stockOne"){
+		user.RestMoney = user.RestMoney + (transaction.StockNumber * stockOne[dayNo]-transaction.InvestMoney)/2
+		expert.RestMoney = expert.RestMoney + (transaction.StockNumber * stockOne[dayNo]-transaction.InvestMoney)/2
+	}else if (transaction.StockID == "stockTwo"){
+		user.RestMoney = user.RestMoney + (transaction.StockNumber * stockTwo[dayNo]-transaction.InvestMoney)/2
+		expert.RestMoney = expert.RestMoney + (transaction.StockNumber * stockTwo[dayNo]-transaction.InvestMoney)/2
+	}else if (transaction.StockID == "stockThree"){
+		user.RestMoney = user.RestMoney + (transaction.StockNumber * stockThree[dayNo]-transaction.InvestMoney)/2
+		expert.RestMoney = expert.RestMoney + (transaction.StockNumber * stockThree[dayNo]-transaction.InvestMoney)/2
+	}else if (transaction.StockID  == "stockFour"){
+		user.RestMoney = user.RestMoney + (transaction.StockNumber * stockFour[dayNo]-transaction.InvestMoney)/2
+		expert.RestMoney = expert.RestMoney + (transaction.StockNumber * stockFour[dayNo]-transaction.InvestMoney)/2
+	}
+
+	userBytes, err := json.Marshal(&user)   //初始化用户信息
+	err = stub.PutState("user", userBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	expertBytes, err := json.Marshal(&expert)     //初始化理财师信息
+
+	err = stub.PutState("expert", expertBytes)
+	if err != nil {
+		return nil, err
+	}
 
 	transactionBytes,err := json.Marshal(&transaction)
 	err = stub.PutState(transaction.ID, transactionBytes)
@@ -576,42 +666,6 @@ func GetAllStocks(stub shim.ChaincodeStubInterface)([]Stock,error){
 	return allStocks,nil
 }
 
-// 卖出股票
-// Author: CavanLiu
-func (t *SimpleChaincode) SellStock(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var stockHolder StockHolder
-	
-	stockHolderID 	:= args[0]
-	userID 			:= args[1]
-	expertID 		:= args[2]
-	stockID         := args[3]
-	userIcedMoney   := String2Int(args[4])
-	expertIcedMoney := String2Int(args[5])
-	stockNumber     := String2Int(args[6])
-	preBuyMoney     := String2Int(args[7])
-	saledMoney      := String2Int(args[8])
-
-	stockHolder = StockHolder{
-						StockHolderID:stockHolderID,
-						UserID:userID,	
-						ExpertID:expertID, 		
-						StockID:stockID,        
-						UserIcedMoney:userIcedMoney,  
-						ExpertIcedMoney:expertIcedMoney,
-						StockNumber:stockNumber,    
-						PreBuyMoney:preBuyMoney,    
-						SaledMoney:saledMoney}
-	
-	stockHolderBytes,err := json.Marshal(&stockHolder)
-	
-	err = stub.PutState(stockHolderID, stockHolderBytes)
-	if err != nil {
-		return nil, err
-	}
-	
-	return nil, nil
-}
-
 //存入Transaction信息
 func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var transaction Transaction
@@ -760,6 +814,7 @@ func GetRegulation(stub shim.ChaincodeStubInterface, regulationId string)(Regula
 
 	return regulation, nil
 }
+
 
 // 生成规则
 // author: CavanLiu

@@ -600,8 +600,8 @@ func (t *SimpleChaincode) SellStock(stub shim.ChaincodeStubInterface, args []str
 						ExpertIcedMoney :expertIcedMoney,
 						StockNumber     :stockNumber,    
 						PreBuyMoney     :preBuyMoney,    
-						SaledMoney      :saledMoney     
-	}
+						SaledMoney      :saledMoney
+						}
 	
 	stockHolderBytes,err := json.Marshal(&stockHolder)
 	

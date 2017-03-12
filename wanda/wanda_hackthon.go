@@ -592,16 +592,15 @@ func (t *SimpleChaincode) SellStock(stub shim.ChaincodeStubInterface, args []str
 	saledMoney      := String2Int(args[8])
 
 	stockHolder = StockHolder{
-						StockHolderID	:stockHolderID,
-						UserID          :userID,	
-						ExpertID        :expertID, 		
-						StockID         :stockID,        
-						UserIcedMoney   :userIcedMoney,  
-						ExpertIcedMoney :expertIcedMoney,
-						StockNumber     :stockNumber,    
-						PreBuyMoney     :preBuyMoney,    
-						SaledMoney      :saledMoney
-						}
+						StockHolderID:stockHolderID,
+						UserID:userID,	
+						ExpertID:expertID, 		
+						StockID:stockID,        
+						UserIcedMoney:userIcedMoney,  
+						ExpertIcedMoney:expertIcedMoney,
+						StockNumber:stockNumber,    
+						PreBuyMoney:preBuyMoney,    
+						SaledMoney:saledMoney}
 	
 	stockHolderBytes,err := json.Marshal(&stockHolder)
 	

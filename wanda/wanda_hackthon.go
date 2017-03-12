@@ -94,9 +94,9 @@ type Regulation struct{
 }
 
 var contractNo = 0  //从零开始
-var transactionNo = 0; //transaction number
-var stockHolderNo = 0;
-var regulationNo = 0;
+var transactionNo = 0 //transaction number
+var stockHolderNo = 0
+var regulationNo = 0
 
 var stockOne = [5]int{100,89,92,103,96}
 var stockTwo = [5]int{100,95,110,116,102}
@@ -203,11 +203,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, err
 	}
-	
-	// 初始化交易信息
-	msgOne("transaction0","50000","MsgOne")
-	msgTwo("transaction1", "yes")
-	msgFour("transaction2", "2", "")
 
 	return nil, nil
 }

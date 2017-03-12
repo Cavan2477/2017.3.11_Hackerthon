@@ -73,20 +73,20 @@ type  StockHolder struct{
 
 // regulation struct
 type Regulation struct{
-	ID		   string   `json:"id"`
-	TransactionDay     int      `json:"transactionDay"`
-	EarningRate        float64  `json:"earningRate"`
-	LosingRate         float64  `json:"losingRate"`
+	ID		   				string   	`json:"id"`
+	TransactionDay     		int      	`json:"transactionDay"`
+	EarningRate        		float64  	`json:"earningRate"`
+	LosingRate         		float64  	`json:"losingRate"`
 
-	ExpireEarningRate        float64    `json:"expireEarningRate"`
-	ExpireLosingRate         float64    `json:"expireLosingRate"`
+	ExpireEarningRate       float64    	`json:"expireEarningRate"`
+	ExpireLosingRate        float64    	`json:"expireLosingRate"`
 
-	ExpireEarningRateByUser  float64    `json:"expireEarningRateByUser"`
-	ExpireLosingRateByUser   float64    `json:"expireLosingRateByUser"`
+	ExpireEarningRateByUser float64    	`json:"expireEarningRateByUser"`
+	ExpireLosingRateByUser  float64    	`json:"expireLosingRateByUser"`
 
-	RegulationBreak          float64    `json:"regulationBreak"`
+	RegulationBreak         float64    	`json:"regulationBreak"`
 
-	Name                     string     `json:"name"`
+	Name                    string     	`json:"name"`
 }
 
 var contractNo = 0  //从零开始
@@ -217,6 +217,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.msgFive(stub,args)
 	}else if(function == "MonitorDay"){
 		return t.monitorDay(stub,args[0])
+	}else if(function == "SellStock"){
+		return t.SellStock(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -574,6 +576,43 @@ func GetAllStocks(stub shim.ChaincodeStubInterface)([]Stock,error){
 	return allStocks,nil
 }
 
+// 卖出股票
+// Author: CavanLiu
+func (t *SimpleChaincode) SellStock(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var stockHolder StockHolder
+	
+	stockHolderID 	:= args[0]
+	userID 			:= args[1]
+	expertID 		:= args[2]
+	stockID         := args[3]
+	userIcedMoney   := String2Int(args[4])
+	expertIcedMoney := String2Int(args[5])
+	stockNumber     := String2Int(args[6])
+	preBuyMoney     := String2Int(args[7])
+	saledMoney      := String2Int(args[8])
+
+	stockHolder = StockHolder{
+						StockHolderID	:stockHolderID 	
+						UserID          :userID 			
+						ExpertID        :expertID 		
+						StockID         :stockID        
+						UserIcedMoney   :userIcedMoney  
+						ExpertIcedMoney :expertIcedMoney
+						StockNumber     :stockNumber    
+						PreBuyMoney     :preBuyMoney    
+						SaledMoney      :saledMoney     
+	}
+	
+	stockHolderBytes,err := json.Marshal(&stockHolder)
+	
+	err = stub.PutState("stockHolder" + strconv.Itoa(stockHolderID), stockHolderBytes)
+	if err != nil {
+		return nil, err
+	}
+	
+	return nil, nil
+}
+
 //存入Transaction信息
 func (t *SimpleChaincode) writeTransaction(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var transaction Transaction
@@ -762,3 +801,5 @@ func (t *SimpleChaincode) CreateRegulation(stub shim.ChaincodeStubInterface, arg
 	
 	return nil, nil
 }
+
+

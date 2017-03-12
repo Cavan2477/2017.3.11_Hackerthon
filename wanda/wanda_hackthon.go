@@ -545,7 +545,7 @@ func (t *SimpleChaincode) monitorDay(stub shim.ChaincodeStubInterface, day strin
 func GetStock(stub shim.ChaincodeStubInterface, stockId string) (Stock, error) {
 	var stock Stock
 
-	stockBytes, err := stub.GetState(stockId)
+	stockBytes, err := stub.GetState("stock"+stockId)
 	if err != nil {
 		fmt.Println("Error retrieving cp " + stockId)
 		return stock, errors.New("Error retrieving cp " + stockId)

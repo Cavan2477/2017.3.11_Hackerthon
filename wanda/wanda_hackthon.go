@@ -604,7 +604,7 @@ func (t *SimpleChaincode) SellStock(stub shim.ChaincodeStubInterface, args []str
 	
 	stockHolderBytes,err := json.Marshal(&stockHolder)
 	
-	err = stub.PutState("stockHolder" + strconv.Itoa(stockHolderID), stockHolderBytes)
+	err = stub.PutState(stockHolderID, stockHolderBytes)
 	if err != nil {
 		return nil, err
 	}
